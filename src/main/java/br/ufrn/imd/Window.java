@@ -105,11 +105,13 @@ public class Window {
                 r = Math.max(r - 0.01f, 0);
                 g = Math.max(g - 0.01f, 0);
                 b = Math.max(b - 0.01f, 0);
+            } else {
+                r = Math.min(r + 0.01f, 1);
+                g = Math.min(g + 0.01f, 1);
+                b = Math.min(b + 0.01f, 1);
             }
 
-            if (KeyListener.isKeyPressed(GLFW_KEY_SPACE)) {
-                fadeToBlack = true;
-            }
+            fadeToBlack = KeyListener.isKeyPressed(GLFW_KEY_SPACE);
 
             glfwSwapBuffers(glfwWindow);
         }
