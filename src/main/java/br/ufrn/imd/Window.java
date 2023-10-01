@@ -14,7 +14,6 @@ public class Window {
     private String tittle;
     private long glfwWindow;
     private float r, g, b, a;
-    private boolean fadeToBlack = false;
 
     private static Window window = null;
 
@@ -101,7 +100,25 @@ public class Window {
             glClearColor(r, g, b, a);
             glClear(GL_COLOR_BUFFER_BIT);
 
-            if (fadeToBlack) {
+
+//            if (KeyListener.isKeyPressed(GLFW_KEY_LEFT)) {
+//                r = 1;
+//                g = 0;
+//                b = 0;
+//            } else if (KeyListener.isKeyPressed(GLFW_KEY_DOWN)) {
+//                r = 0;
+//                g = 1;
+//                b = 0;
+//            } else if (KeyListener.isKeyPressed(GLFW_KEY_RIGHT)) {
+//                r = 0;
+//                g = 0;
+//                b = 1;
+//            }
+
+
+
+
+            if (KeyListener.isKeyPressed(GLFW_KEY_SPACE)) {
                 r = Math.max(r - 0.01f, 0);
                 g = Math.max(g - 0.01f, 0);
                 b = Math.max(b - 0.01f, 0);
@@ -111,7 +128,10 @@ public class Window {
                 b = Math.min(b + 0.01f, 1);
             }
 
-            fadeToBlack = KeyListener.isKeyPressed(GLFW_KEY_SPACE);
+            r = KeyListener.isKeyPressed(GLFW_KEY_LEFT) ? 1 : r;
+            g = KeyListener.isKeyPressed(GLFW_KEY_DOWN) ? 1 : g;
+            b = KeyListener.isKeyPressed(GLFW_KEY_RIGHT) ? 1 : b;
+
 
             glfwSwapBuffers(glfwWindow);
         }
