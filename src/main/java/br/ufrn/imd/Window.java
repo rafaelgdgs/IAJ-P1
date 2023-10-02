@@ -1,5 +1,6 @@
 package br.ufrn.imd;
 
+import br.ufrn.imd.util.Time;
 import org.lwjgl.Version;
 import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.opengl.GL;
@@ -13,9 +14,9 @@ public class Window {
     private int width, height;
     private String tittle;
     private long glfwWindow;
-    private float r, g, b, a;
-
+    public float r, g, b, a;
     private static Window window = null;
+    private static Scene currentScene;
 
     private Window() {
         this.width = 1280;
@@ -25,6 +26,21 @@ public class Window {
         g = 1;
         b = 1;
         a = 1;
+    }
+
+    public static void changeScene(int newScene) {
+        switch (newScene) {
+            case 0:
+                currentScene = new LevelEditorScene();
+                //currentScene.init();
+                break;
+            case 1:
+                currentScene = new LevelScene();
+                break;
+            default:
+                assert false : "Unknown scene '" + newScene + "'";
+                break;
+        }
     }
 
     public static Window get() {
@@ -63,7 +79,7 @@ public class Window {
         glfwDefaultWindowHints();
         glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE);
         glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE);
-        glfwWindowHint(GLFW_MAXIMIZED, GLFW_TRUE);
+        glfwWindowHint(GLFW_MAXIMIZED, GLFW_FALSE);
 
         // Create the window
         glfwWindow = glfwCreateWindow(this.width, this.height, this.tittle, NULL, NULL);
@@ -90,9 +106,15 @@ public class Window {
         // creates the GLCapabilities instance and makes the OpenGL
         // bindings available for use.
         GL.createCapabilities();
+
+        Window.changeScene(0);
     }
 
     public void loop() {
+        float beginTime = Time.getTime();
+        float endTime;
+        float dt = -1.0f;
+
         while(!glfwWindowShouldClose(glfwWindow)) {
             // Poll events
             glfwPollEvents();
@@ -100,40 +122,16 @@ public class Window {
             glClearColor(r, g, b, a);
             glClear(GL_COLOR_BUFFER_BIT);
 
-
-//            if (KeyListener.isKeyPressed(GLFW_KEY_LEFT)) {
-//                r = 1;
-//                g = 0;
-//                b = 0;
-//            } else if (KeyListener.isKeyPressed(GLFW_KEY_DOWN)) {
-//                r = 0;
-//                g = 1;
-//                b = 0;
-//            } else if (KeyListener.isKeyPressed(GLFW_KEY_RIGHT)) {
-//                r = 0;
-//                g = 0;
-//                b = 1;
-//            }
-
-
-
-
-            if (KeyListener.isKeyPressed(GLFW_KEY_SPACE)) {
-                r = Math.max(r - 0.01f, 0);
-                g = Math.max(g - 0.01f, 0);
-                b = Math.max(b - 0.01f, 0);
-            } else {
-                r = Math.min(r + 0.01f, 1);
-                g = Math.min(g + 0.01f, 1);
-                b = Math.min(b + 0.01f, 1);
+            if (dt >= 0) {
+                currentScene.update(dt);
             }
 
-            r = KeyListener.isKeyPressed(GLFW_KEY_LEFT) ? 1 : r;
-            g = KeyListener.isKeyPressed(GLFW_KEY_DOWN) ? 1 : g;
-            b = KeyListener.isKeyPressed(GLFW_KEY_RIGHT) ? 1 : b;
-
-
             glfwSwapBuffers(glfwWindow);
+
+            endTime = Time.getTime();
+            dt = endTime - beginTime;
+            beginTime = endTime;
+            System.out.println((1.0f/dt) + " FPS");
         }
     }
 }
